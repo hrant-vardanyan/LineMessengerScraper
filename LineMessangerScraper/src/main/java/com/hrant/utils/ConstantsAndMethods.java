@@ -12,6 +12,8 @@ public class ConstantsAndMethods {
 	public static Pattern REGEX_COORDINATES = Pattern.compile("x=(\\d+),y=(\\d+)");
 	public static String macImagesDir = "MacImages/";
 	public static String winImagesDir = "WinImages/";
+	public static String winTempDir = "C://LineTemp";
+	public static String macTempDir = "";
 
 	public static String detectOS() {
 
@@ -45,16 +47,26 @@ public class ConstantsAndMethods {
 		return file;
 	}
 
-	public static void createTempFolder(String directory) {
-		new File(directory).mkdirs();
+	public static void createTempFolder(File dir) {
+
+		dir.mkdirs();
 
 	}
 
-	public static void removeTempFolder(String directory) {
-		File file = new File(directory);
-		file.delete();
+	public static void deleteTempFolder(File dir) {
+
+		if (dir.isDirectory()) {
+			File[] files = dir.listFiles();
+			if (files != null && files.length > 0) {
+				for (File aFile : files) {
+					deleteTempFolder(aFile);
+				}
+			}
+			dir.delete();
+		} else {
+			dir.delete();
+		}
+
 	}
-	
-	
 
 }
