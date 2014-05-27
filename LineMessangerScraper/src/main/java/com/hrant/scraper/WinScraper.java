@@ -24,6 +24,7 @@ public class WinScraper {
 	private ScreenRegion desktop;
 	private Mouse mouse;
 	private Keyboard kb;
+	private double sec = 0.5;
 
 	public WinScraper() {
 
@@ -48,49 +49,59 @@ public class WinScraper {
 
 	public void downloadTextDocs() {
 		ConstantsAndMethods.createTempFolder(new File(ConstantsAndMethods.winTempDir));
-		Target targetIcon = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "icon.PNG"));
+		Target targetIcon = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir
+				+ "icon.PNG"));
 		ScreenRegion iconOnTaskbar = desktop.find(targetIcon);
 		if (iconOnTaskbar != null) {
 			mouse.click(iconOnTaskbar.getCenter());
 
 		}
-		ConstantsAndMethods.delaySec(1);
-		Target targetMax = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "maximize.PNG"));
+		ConstantsAndMethods.delaySec(sec);
+		Target targetMax = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir
+				+ "maximize.PNG"));
 		ScreenRegion max = desktop.find(targetMax);
 		if (max != null) {
 			mouse.click(max.getCenter());
 		}
-		ConstantsAndMethods.delaySec(1);
-		Target targetScrollDown = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "scrollDown.PNG"));
+		ConstantsAndMethods.delaySec(sec);
+		Target targetScrollDown = new ImageTarget(
+				ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "scrollDown.PNG"));
 		ScreenRegion scrollDown = desktop.find(targetScrollDown);
 		if (scrollDown != null) {
 			mouse.click(scrollDown.getUpperLeftCorner());
 			mouse.wheel(1, 30);
 		}
-		ConstantsAndMethods.delaySec(1);
-
+		ConstantsAndMethods.delaySec(sec);
 		doScrollAndClick();
 
 	}
 
 	private void doScrollAndClick() {
-		Target targetFriends = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "friends.PNG"));
-
-		clickOnTenFriends(10);
-		System.out.println("did 10 time");
+		Target targetFriends = new ImageTarget(
+				ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "friends.PNG"));
+		clickOnTenFriends(11);
+		ConstantsAndMethods.delaySec(sec);
+		Target targetScrollDown = new ImageTarget(
+				ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "scrollDown.PNG"));
+		ScreenRegion scrollDown = desktop.find(targetScrollDown);
+		if (scrollDown != null) {
+			mouse.click(scrollDown.getUpperLeftCorner());
+		}
 		boolean friendsIconFound = false;
 		while (true) {
 			int i = 0;
 			for (; i < 11; i++) {
-				System.out.println("mouse up to 1");
+				// System.out.println("mouse up to 1");
 				mouse.wheel(-1, 1);
 				if (desktop.find(targetFriends) != null) {
 					friendsIconFound = true;
 					break;
 				}
 			}
+			ConstantsAndMethods.delaySec(sec);
+			System.out.println(i);
+			clickOnTenFriends(i + 1);
 
-			clickOnTenFriends(i);
 			if (friendsIconFound) {
 				return;
 			}
@@ -99,12 +110,12 @@ public class WinScraper {
 	}
 
 	private void clickOnTenFriends(int scrolCount) {
-		int y = (int) (683 - (((10 - scrolCount) * DELTA) * 0.9));
+		int y = (int) (683 - (((11 - scrolCount) * DELTA) * 0.8));
 		try {
 			for (int i = 1; i <= scrolCount; i++) {
 				downloadTextFileForEachFriend(706, y);
 				y = y - DELTA;
-				ConstantsAndMethods.delaySec(1);
+				ConstantsAndMethods.delaySec(sec);
 			}
 		} catch (AWTException e) {
 			LOGGER.error("error with clicking on friends ", e);
@@ -112,7 +123,6 @@ public class WinScraper {
 	}
 
 	private void downloadTextFileForEachFriend(int x, int y) throws AWTException {
-
 		ConstantsAndMethods.click(x, y);
 		ConstantsAndMethods.delaySec(2);
 		Target targetAm = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir
@@ -122,7 +132,6 @@ public class WinScraper {
 				+ "pm.PNG"));
 		ScreenRegion pm = desktop.find(targetPm);
 		if (am != null || pm != null) {
-
 			Target targetScrollUp = new ImageTarget(
 					ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "scrollUp.PNG"));
 			ScreenRegion scrollUp = desktop.find(targetScrollUp);
@@ -130,8 +139,7 @@ public class WinScraper {
 				mouse.click(scrollUp.getLowerLeftCorner());
 				mouse.wheel(-1, 25);
 			}
-			ConstantsAndMethods.delaySec(1);
-
+			ConstantsAndMethods.delaySec(sec);
 			Target targetPreviousChats = new ImageTarget(
 					ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "previousChats.PNG"));
 			ScreenRegion previousChats = desktop.find(targetPreviousChats);
@@ -142,28 +150,28 @@ public class WinScraper {
 				previousChats = desktop.find(targetPreviousChats);
 			}
 
-			ConstantsAndMethods.delaySec(1);
+			ConstantsAndMethods.delaySec(sec);
 			Target targetMenu = new ImageTarget(
 					ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "menu.PNG"));
 			ScreenRegion menu = desktop.find(targetMenu);
 			if (menu != null) {
 				mouse.click(menu.getCenter());
 			}
-			ConstantsAndMethods.delaySec(1);
+			ConstantsAndMethods.delaySec(sec);
 			Target targetSaveMessages = new ImageTarget(
 					ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "saveMessages.PNG"));
 			ScreenRegion saveMessages = desktop.find(targetSaveMessages);
 			if (saveMessages != null) {
 				mouse.click(saveMessages.getCenter());
 			}
-			ConstantsAndMethods.delaySec(1);
+			ConstantsAndMethods.delaySec(sec);
 			Target targetOk = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir
 					+ "ok.PNG"));
 			ScreenRegion ok = desktop.find(targetOk);
 			if (ok != null) {
 				mouse.click(ok.getCenter());
 			}
-			ConstantsAndMethods.delaySec(1);
+			ConstantsAndMethods.delaySec(sec);
 			Target targetSavePath = new ImageTarget(
 					ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "savePath.PNG"));
 			ScreenRegion savePath = desktop.find(targetSavePath);
@@ -171,14 +179,14 @@ public class WinScraper {
 				mouse.click(savePath.getCenter());
 				kb.type("C:\\LineTemp");
 			}
-			// ConstantsAndMethods.delaySec(1);
+			// ConstantsAndMethods.delaySec(sec);
 			Target targetGoTo = new ImageTarget(
 					ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "goToCurrentPath.PNG"));
 			ScreenRegion goTo = desktop.find(targetGoTo);
 			if (goTo != null) {
 				mouse.click(goTo.getCenter());
 			}
-			ConstantsAndMethods.delaySec(1);
+			ConstantsAndMethods.delaySec(sec);
 			Target targetSave = new ImageTarget(
 					ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "save.PNG"));
 			ScreenRegion save = desktop.find(targetSave);
@@ -186,7 +194,7 @@ public class WinScraper {
 				mouse.click(save.getCenter());
 
 			}
-			ConstantsAndMethods.delaySec(1);
+			ConstantsAndMethods.delaySec(sec);
 		}
 		Target targetClose = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir
 				+ "close.PNG"));
@@ -195,7 +203,7 @@ public class WinScraper {
 			mouse.click(close.getUpperLeftCorner());
 
 		}
-		ConstantsAndMethods.delaySec(1);
+		ConstantsAndMethods.delaySec(sec);
 	}
 
 }

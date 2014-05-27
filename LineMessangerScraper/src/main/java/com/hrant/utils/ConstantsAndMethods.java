@@ -5,6 +5,7 @@ import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.io.File;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class ConstantsAndMethods {
@@ -28,9 +29,9 @@ public class ConstantsAndMethods {
 		bot.mouseRelease(InputEvent.BUTTON1_MASK);
 	}
 
-	public static void delaySec(int sec) {
+	public static void delaySec(double sec) {
 		try {
-			Thread.sleep(sec * 1000);
+			TimeUnit.MILLISECONDS.sleep((long) (sec * 1000));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
