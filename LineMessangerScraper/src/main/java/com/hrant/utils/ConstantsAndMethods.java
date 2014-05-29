@@ -14,7 +14,12 @@ public class ConstantsAndMethods {
 	public static String macImagesDir = "MacImages/";
 	public static String winImagesDir = "WinImages/";
 	public static String winTempDir = "C://LineTemp";
-	public static String macTempDir = "";
+	public static String macTempDir = System.getProperty("user.home") + "/Documents/LineTemp";
+	public static Pattern REGEX_MATCHING_DATE = Pattern.compile("(\\d+/\\d+/\\d+)");
+	public static volatile boolean flag = false;
+	
+	
+	
 
 	public static String detectOS() {
 
@@ -55,7 +60,6 @@ public class ConstantsAndMethods {
 	}
 
 	public static void deleteTempFolder(File dir) {
-
 		if (dir.isDirectory()) {
 			File[] files = dir.listFiles();
 			if (files != null && files.length > 0) {
@@ -67,7 +71,5 @@ public class ConstantsAndMethods {
 		} else {
 			dir.delete();
 		}
-
 	}
-
 }

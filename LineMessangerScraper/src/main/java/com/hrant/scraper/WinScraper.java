@@ -33,19 +33,19 @@ public class WinScraper {
 		this.kb = new DesktopKeyboard();
 	}
 
-	public static void main(String[] args) {
-
-		try {
-			WinScraper winScraper = new WinScraper();
-			winScraper.downloadTextDocs();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			ConstantsAndMethods.deleteTempFolder(new File(ConstantsAndMethods.winTempDir));
-		}
-
-	}
+//	public static void main(String[] args) {
+//
+//		try {
+//			WinScraper winScraper = new WinScraper();
+//			winScraper.downloadTextDocs();
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			ConstantsAndMethods.deleteTempFolder(new File(ConstantsAndMethods.winTempDir));
+//		}
+//
+//	}
 
 	public void downloadTextDocs() {
 		ConstantsAndMethods.createTempFolder(new File(ConstantsAndMethods.winTempDir));
@@ -171,7 +171,7 @@ public class WinScraper {
 			if (ok != null) {
 				mouse.click(ok.getCenter());
 			}
-			ConstantsAndMethods.delaySec(sec);
+			ConstantsAndMethods.delaySec(1);
 			Target targetSavePath = new ImageTarget(
 					ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "savePath.PNG"));
 			ScreenRegion savePath = desktop.find(targetSavePath);
