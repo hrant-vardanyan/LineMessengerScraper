@@ -104,10 +104,13 @@ public class LineFrame extends JFrame {
 		fileChooser = new JFileChooser();
 		fileChooser.setBounds(220, 178, 392, 175);
 	}
+	private Start start;
 
 	public void startDownloading() {
 		singleThreadExecutor = Executors.newSingleThreadExecutor();
 		future = singleThreadExecutor.submit(new Runnable() {
+
+		
 
 			@Override
 			public void run() {
@@ -115,7 +118,7 @@ public class LineFrame extends JFrame {
 				btnStart.setEnabled(false);
 
 				try {
-					Start start = new Start();
+					start = new Start();
 					start.startScraping(timeZone.getText());
 
 				} catch (Exception e) {
@@ -129,8 +132,7 @@ public class LineFrame extends JFrame {
 
 	public void stopDownloading() {
 		
-		ConstantsAndMethods.deleteTempFolder(new File(ConstantsAndMethods.macTempDir));
-		ConstantsAndMethods.deleteTempFolder(new File(ConstantsAndMethods.winImagesDir));
+		ConstantsAndMethods.deleteTempFolder(new File(start.path));
 		ConstantsAndMethods.flag = true;
 
 	}

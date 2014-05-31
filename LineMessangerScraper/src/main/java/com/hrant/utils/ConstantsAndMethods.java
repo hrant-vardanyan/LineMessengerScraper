@@ -8,6 +8,10 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
+import com.hrant.Start;
+
 public class ConstantsAndMethods {
 
 	public static Pattern REGEX_COORDINATES = Pattern.compile("x=(\\d+),y=(\\d+)");
@@ -17,7 +21,7 @@ public class ConstantsAndMethods {
 	public static String macTempDir = System.getProperty("user.home") + "/Documents/LineTemp";
 	public static Pattern REGEX_MATCHING_DATE = Pattern.compile("(\\d+/\\d+/\\d+)");
 	public static volatile boolean flag = false;
-	
+	private static final Logger LOGGER = Logger.getLogger(ConstantsAndMethods.class);
 	
 	
 
@@ -42,15 +46,16 @@ public class ConstantsAndMethods {
 		}
 	}
 
-	public static File getFileFromResources(String filePath) {
-		File file = null;
+	public static URL getFileFromResources(String filePath) {
+		URL resourceUrl = null;
 		try {
-			URL resourceUrl = Thread.currentThread().getContextClassLoader().getResource(filePath);
-			file = new File(resourceUrl.toURI());
+			 resourceUrl = Thread.currentThread().getContextClassLoader().getResource(filePath);
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return file;
+		return resourceUrl;
 	}
 
 	public static void createTempFolder(File dir) {

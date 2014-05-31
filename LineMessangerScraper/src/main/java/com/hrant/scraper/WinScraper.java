@@ -25,6 +25,7 @@ public class WinScraper {
 	private Mouse mouse;
 	private Keyboard kb;
 	private double sec = 0.5;
+	
 
 	public WinScraper() {
 
