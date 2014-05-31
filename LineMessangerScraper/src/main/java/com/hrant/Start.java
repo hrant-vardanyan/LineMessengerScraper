@@ -49,6 +49,10 @@ public class Start {
 		} catch (Exception e) {
 			LOGGER.error("error with after auto... part . ", e);
 		}
+		finally{
+			ConstantsAndMethods.deleteTempFolder(new File(this.path));
+		}
+		
 	}
 
 }

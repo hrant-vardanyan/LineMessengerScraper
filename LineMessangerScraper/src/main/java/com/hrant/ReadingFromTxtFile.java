@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -24,27 +25,23 @@ import com.hrant.model.Message;
 
 public class ReadingFromTxtFile {
 
-	
 	private static final Pattern DATE_PATTERN = Pattern.compile("(.+)\\(");
-	private static final Pattern MESSAGE_PATTERN = Pattern.compile("(\\d+:\\d+)\\s([^\\s]+)\\s(.+)");
+	private static final Pattern MESSAGE_PATTERN = Pattern.compile("(\\d+:\\d+)\\s([^\\s]+)\\s(.+)", Pattern.DOTALL);
 	private static final Pattern NAME_PATTERN = Pattern.compile("\\[LINE\\](.+).txt");
 	private List<String> allPathsInTempFolder;
 	private List<String> allNames;
 	private TimeZone timeZone;
 
-	
-	public ReadingFromTxtFile(File pathToDirectory, String timeZoneStr){
+	public ReadingFromTxtFile(File pathToDirectory, String timeZoneStr) {
 		this.timeZone = TimeZone.getTimeZone(timeZoneStr);
 		this.allPathsInTempFolder = getAllPathsInTempFolder(pathToDirectory);
 		this.allNames = getAllNames();
-		
-	}
-	
 
-	
-	public void writeForAllFiles(){
-		for(String path : this.allPathsInTempFolder){
-//			writeDataForOneFile("C:\\LineTemp\\[LINE]OKpanda カスタマーサポート.txt");
+	}
+
+	public void writeForAllFiles() {
+		for (String path : this.allPathsInTempFolder) {
+			// writeDataForOneFile("C:\\LineTemp\\[LINE]OKpanda カスタマーサポート.txt");
 			try {
 				writeDataForOneFile(path);
 			} catch (IOException e) {
@@ -52,11 +49,9 @@ public class ReadingFromTxtFile {
 			}
 		}
 	}
-	
-	public void writeDataForOneFile(String filePath) throws IOException{
-		
-//		GregorianCalendar gregorianCalendar = new GregorianCalendar(TimeZone.getTimeZone("GMT-8:00"));
-//		gregorianCalendar.set(1990, 2, 2);
+
+	public void writeDataForOneFile(String filePath) throws IOException {
+
 		List<String> allLines = getDataFromTxtFile(filePath);
 		List<List<String>> listOfList = getSubLists(allLines);
 		List<Message> allMessagesFromOneFile = new ArrayList<>();
@@ -74,11 +69,18 @@ public class ReadingFromTxtFile {
 		List<List<String>> listOfList = new ArrayList<>();
 		int start = 0;
 		for (int i = 1; i < allLines.size(); i++) {
+			// Pattern pattern = Pattern.compile("^\\d+/\\d+/\\d+.+$",
+			// Pattern.DOTALL);
+			// allLines.get(i).matches("^\\d+/\\d+/\\d+.+$")
 			if (allLines.get(i).matches("^\\d+/\\d+/\\d+.+$")) {
 				List<String> subList = allLines.subList(start, i);
 				listOfList.add(subList);
 				start = i;
 			}
+		}
+		if (start == 0) {
+			listOfList.add(allLines);
+			return listOfList;
 		}
 
 		return listOfList;
@@ -103,7 +105,7 @@ public class ReadingFromTxtFile {
 				String nameFirstPart = timePattern.group(2);
 				String fullName = getNameByFirstPart(nameFirstPart);
 				message.setSpeaker(fullName);
-				message.setCitem(StringUtils.substringAfter(timePattern.group(), fullName));
+				message.setCitem(StringUtils.substringAfter(timePattern.group().trim(), fullName));
 			}
 			messageList.add(message);
 		}
@@ -130,8 +132,13 @@ public class ReadingFromTxtFile {
 
 	private List<String> getDataFromTxtFile(String path) throws IOException {
 
-		return Files.readAllLines(Paths.get(path), StandardCharsets.UTF_8);
-
+		byte[] readAllBytes = Files.readAllBytes(Paths.get(path));
+		String allContent = new String(readAllBytes);
+		String[] split = allContent.split("(?=\\d{2}:\\d{2})");
+		List<String> allLines = Arrays.asList(split);
+		// List<String> allLines = Files.readAllLines(Paths.get(path),
+		// StandardCharsets.UTF_8);
+		return allLines;
 	}
 
 	private static List<String> getAllPathsInTempFolder(File pathToDirectory) {

@@ -1,6 +1,8 @@
 package com.hrant.scraper;
 
 import java.awt.AWTException;
+import java.awt.RenderingHints.Key;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 import org.apache.log4j.Logger;
@@ -8,6 +10,7 @@ import org.sikuli.api.DesktopScreenRegion;
 import org.sikuli.api.ImageTarget;
 import org.sikuli.api.ScreenRegion;
 import org.sikuli.api.Target;
+import org.sikuli.api.robot.KeyModifier;
 import org.sikuli.api.robot.Keyboard;
 import org.sikuli.api.robot.Mouse;
 import org.sikuli.api.robot.desktop.DesktopKeyboard;
@@ -25,7 +28,6 @@ public class WinScraper {
 	private Mouse mouse;
 	private Keyboard kb;
 	private double sec = 0.5;
-	
 
 	public WinScraper() {
 
@@ -34,19 +36,20 @@ public class WinScraper {
 		this.kb = new DesktopKeyboard();
 	}
 
-//	public static void main(String[] args) {
-//
-//		try {
-//			WinScraper winScraper = new WinScraper();
-//			winScraper.downloadTextDocs();
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		} finally {
-//			ConstantsAndMethods.deleteTempFolder(new File(ConstantsAndMethods.winTempDir));
-//		}
-//
-//	}
+	// public static void main(String[] args) {
+	//
+	// try {
+	// WinScraper winScraper = new WinScraper();
+	// winScraper.downloadTextDocs();
+	//
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// } finally {
+	// ConstantsAndMethods.deleteTempFolder(new
+	// File(ConstantsAndMethods.winTempDir));
+	// }
+	//
+	// }
 
 	public void downloadTextDocs() {
 		ConstantsAndMethods.createTempFolder(new File(ConstantsAndMethods.winTempDir));
@@ -70,7 +73,9 @@ public class WinScraper {
 		ScreenRegion scrollDown = desktop.find(targetScrollDown);
 		if (scrollDown != null) {
 			mouse.click(scrollDown.getUpperLeftCorner());
+			kb.keyDown(KeyEvent.VK_CONTROL);
 			mouse.wheel(1, 30);
+			kb.keyUp(KeyEvent.VK_CONTROL);
 		}
 		ConstantsAndMethods.delaySec(sec);
 		doScrollAndClick();
@@ -78,6 +83,9 @@ public class WinScraper {
 	}
 
 	private void doScrollAndClick() {
+		if (ConstantsAndMethods.flag) {
+			return;
+		}
 		Target targetFriends = new ImageTarget(
 				ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "friends.PNG"));
 		clickOnTenFriends(11);
@@ -113,7 +121,11 @@ public class WinScraper {
 	private void clickOnTenFriends(int scrolCount) {
 		int y = (int) (683 - (((11 - scrolCount) * DELTA) * 0.8));
 		try {
+			if (ConstantsAndMethods.flag) {
+				return;
+			}
 			for (int i = 1; i <= scrolCount; i++) {
+				
 				downloadTextFileForEachFriend(706, y);
 				y = y - DELTA;
 				ConstantsAndMethods.delaySec(sec);
@@ -124,6 +136,7 @@ public class WinScraper {
 	}
 
 	private void downloadTextFileForEachFriend(int x, int y) throws AWTException {
+		
 		ConstantsAndMethods.click(x, y);
 		ConstantsAndMethods.delaySec(2);
 		Target targetAm = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir
@@ -138,7 +151,9 @@ public class WinScraper {
 			ScreenRegion scrollUp = desktop.find(targetScrollUp);
 			if (scrollUp != null) {
 				mouse.click(scrollUp.getLowerLeftCorner());
+				kb.keyDown(KeyEvent.VK_CONTROL);
 				mouse.wheel(-1, 25);
+				kb.keyUp(KeyEvent.VK_CONTROL);
 			}
 			ConstantsAndMethods.delaySec(sec);
 			Target targetPreviousChats = new ImageTarget(
@@ -206,5 +221,4 @@ public class WinScraper {
 		}
 		ConstantsAndMethods.delaySec(sec);
 	}
-
 }

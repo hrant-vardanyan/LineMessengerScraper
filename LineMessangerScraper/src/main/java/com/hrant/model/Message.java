@@ -2,6 +2,7 @@ package com.hrant.model;
 
 import java.util.Calendar;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,12 +19,13 @@ public class Message {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int chatid;
 	
+	@Temporal(value = TemporalType.TIMESTAMP)
+	private Calendar date;
 	private String speaker;
+	@Column(length=10_000)
 	private String citem;
 	
 
-	@Temporal(value = TemporalType.TIMESTAMP)
-	private Calendar date;
 
 	public int getChatid() {
 		return chatid;

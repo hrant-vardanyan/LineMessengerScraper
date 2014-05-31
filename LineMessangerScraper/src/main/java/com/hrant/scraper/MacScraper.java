@@ -1,6 +1,7 @@
 package com.hrant.scraper;
 
 import java.awt.AWTException;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 import org.apache.log4j.Logger;
@@ -70,7 +71,9 @@ public class MacScraper {
 		ScreenRegion scrollDown = desktop.find(targetScrollDown);
 		if (scrollDown != null) {
 			mouse.click(scrollDown.getCenter());
+			kb.keyDown(KeyEvent.VK_CONTROL);
 			mouse.wheel(-1, 70);
+			kb.keyUp(KeyEvent.VK_CONTROL);
 		}
 		ConstantsAndMethods.delaySec(sec);
 		Target targetScrollDowned = new ImageTarget(
@@ -146,7 +149,9 @@ public class MacScraper {
 			ScreenRegion scrollUp = desktop.find(targetScrollUp);
 			if (scrollUp != null) {
 				mouse.click(scrollUp.getUpperLeftCorner());
+				kb.keyDown(KeyEvent.VK_CONTROL);
 				mouse.wheel(1, 85);
+				kb.keyUp(KeyEvent.VK_CONTROL);
 			}
 			ConstantsAndMethods.delaySec(sec);
 
