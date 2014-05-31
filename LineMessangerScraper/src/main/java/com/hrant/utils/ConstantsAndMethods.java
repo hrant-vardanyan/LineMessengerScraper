@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import com.hrant.Start;
 
 public class ConstantsAndMethods {
 
@@ -42,7 +41,7 @@ public class ConstantsAndMethods {
 		try {
 			TimeUnit.MILLISECONDS.sleep((long) (sec * 1000));
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			LOGGER.error("error with delayin ", e);
 		}
 	}
 
@@ -53,13 +52,12 @@ public class ConstantsAndMethods {
 			
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("error with reading path ", e);
 		}
 		return resourceUrl;
 	}
 
 	public static void createTempFolder(File dir) {
-
 		dir.mkdirs();
 
 	}

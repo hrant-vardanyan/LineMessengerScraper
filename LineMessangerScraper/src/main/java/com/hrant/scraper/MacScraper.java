@@ -24,7 +24,7 @@ public class MacScraper {
 	private ScreenRegion desktop;
 	private Mouse mouse;
 	private Keyboard kb;
-	private double sec = 0.7;
+	private double sec = 0.5;
 
 	public MacScraper() {
 
@@ -50,6 +50,11 @@ public class MacScraper {
 
 	public void downloadTextDocs() {
 		ConstantsAndMethods.createTempFolder(new File(ConstantsAndMethods.macTempDir));
+//		try {
+//			Files.createDirectories(Paths.get(ConstantsAndMethods.macTempDir));
+//		} catch (IOException e) {
+//			LOGGER.error("Error trying create mac folder", e);
+//		}
 		Target targetIcon = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.macImagesDir
 				+ "icon.PNG"));
 		ScreenRegion iconOnTaskbar = desktop.find(targetIcon);

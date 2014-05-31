@@ -1,7 +1,6 @@
 package com.hrant.scraper;
 
 import java.awt.AWTException;
-import java.awt.RenderingHints.Key;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
@@ -10,7 +9,6 @@ import org.sikuli.api.DesktopScreenRegion;
 import org.sikuli.api.ImageTarget;
 import org.sikuli.api.ScreenRegion;
 import org.sikuli.api.Target;
-import org.sikuli.api.robot.KeyModifier;
 import org.sikuli.api.robot.Keyboard;
 import org.sikuli.api.robot.Mouse;
 import org.sikuli.api.robot.desktop.DesktopKeyboard;
@@ -53,6 +51,13 @@ public class WinScraper {
 
 	public void downloadTextDocs() {
 		ConstantsAndMethods.createTempFolder(new File(ConstantsAndMethods.winTempDir));
+
+		// try {
+		// Files.createDirectories(Paths.get(ConstantsAndMethods.winTempDir));
+		// } catch (IOException e) {
+		// LOGGER.error("Error trying create win folder", e);
+		// }
+
 		Target targetIcon = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir
 				+ "icon.PNG"));
 		ScreenRegion iconOnTaskbar = desktop.find(targetIcon);
@@ -125,7 +130,7 @@ public class WinScraper {
 				return;
 			}
 			for (int i = 1; i <= scrolCount; i++) {
-				
+
 				downloadTextFileForEachFriend(706, y);
 				y = y - DELTA;
 				ConstantsAndMethods.delaySec(sec);
@@ -136,7 +141,7 @@ public class WinScraper {
 	}
 
 	private void downloadTextFileForEachFriend(int x, int y) throws AWTException {
-		
+
 		ConstantsAndMethods.click(x, y);
 		ConstantsAndMethods.delaySec(2);
 		Target targetAm = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir
@@ -190,35 +195,38 @@ public class WinScraper {
 			ConstantsAndMethods.delaySec(1);
 			Target targetSavePath = new ImageTarget(
 					ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "savePath.PNG"));
-			
+
 			ScreenRegion savePath = desktop.find(targetSavePath);
 			if (savePath != null) {
 				mouse.click(savePath.getCenter());
 				kb.type("C:\\LineTemp");
-			}else{
+				ConstantsAndMethods.delaySec(sec);
+				Target targetGoTo = new ImageTarget(
+						ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir
+								+ "goToCurrentPath.PNG"));
+				ScreenRegion goTo = desktop.find(targetGoTo);
+				if (goTo != null) {
+					mouse.click(goTo.getCenter());
+				}
+			} else {
 				Target targetSavePathWin7 = new ImageTarget(
 						ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "savePathWin7.PNG"));
-				
+
 				ScreenRegion savePathWin7 = desktop.find(targetSavePathWin7);
 				if (savePathWin7 != null) {
 					mouse.click(savePathWin7.getCenter());
 					kb.type("C:\\LineTemp");
 				}
-			}
-			// ConstantsAndMethods.delaySec(sec);
-			Target targetGoTo = new ImageTarget(
-					ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "goToCurrentPath.PNG"));
-			ScreenRegion goTo = desktop.find(targetGoTo);
-			if (goTo != null) {
-				mouse.click(goTo.getCenter());
-			}else{
+				ConstantsAndMethods.delaySec(sec);
 				Target targetGoToWin7 = new ImageTarget(
-						ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "goToCurrentPathWin7.PNG"));
+						ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir
+								+ "goToCurrentPathWin7.png"));
 				ScreenRegion goToWin7 = desktop.find(targetGoToWin7);
 				if (goToWin7 != null) {
 					mouse.click(goToWin7.getCenter());
 				}
 			}
+
 			ConstantsAndMethods.delaySec(sec);
 			Target targetSave = new ImageTarget(
 					ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir + "save.PNG"));
