@@ -48,11 +48,10 @@ public class Start {
 			file.writeForAllFiles();
 		} catch (Exception e) {
 			LOGGER.error("error with after auto... part . ", e);
-		}
-		finally{
+		} finally {
 			ConstantsAndMethods.deleteTempFolder(new File(this.path));
 		}
-		
+
 	}
 
 }

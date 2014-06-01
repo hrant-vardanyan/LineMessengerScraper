@@ -10,19 +10,17 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-
 public class ConstantsAndMethods {
 
 	public static Pattern REGEX_COORDINATES = Pattern.compile("x=(\\d+),y=(\\d+)");
-	public static String macImagesDir = "MacImages/";
-	public static String winImagesDir = "WinImages/";
-	public static String winTempDir = "C://LineTemp";
-	public static String macTempDir = System.getProperty("user.home") + "/Documents/LineTemp";
+	public static String macImagesDir = "MacImages" + File.separator;
+	public static String winImagesDir = "WinImages" + File.separator;
+	public static String winTempDir = "C:" + File.separator + "LineTemp";
+	public static String macTempDir = System.getProperty("user.home") + File.separator + "Documents" + File.separator
+			+ "LineTemp";
 	public static Pattern REGEX_MATCHING_DATE = Pattern.compile("(\\d+/\\d+/\\d+)");
 	public static volatile boolean flag = false;
 	private static final Logger LOGGER = Logger.getLogger(ConstantsAndMethods.class);
-	
-	
 
 	public static String detectOS() {
 
@@ -46,11 +44,13 @@ public class ConstantsAndMethods {
 	}
 
 	public static URL getFileFromResources(String filePath) {
+		LOGGER.info(filePath);
 		URL resourceUrl = null;
 		try {
-			 resourceUrl = Thread.currentThread().getContextClassLoader().getResource(filePath);
 			
-			
+			resourceUrl = Thread.currentThread().getContextClassLoader().getResource(filePath);
+			LOGGER.error("hbghn" + resourceUrl);
+
 		} catch (Exception e) {
 			LOGGER.error("error with reading path ", e);
 		}
