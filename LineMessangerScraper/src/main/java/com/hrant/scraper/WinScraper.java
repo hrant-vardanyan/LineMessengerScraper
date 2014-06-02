@@ -51,7 +51,9 @@ public class WinScraper {
 
 	public void downloadTextDocs() {
 		ConstantsAndMethods.createTempFolder(new File(ConstantsAndMethods.winTempDir));
-
+		if (ConstantsAndMethods.flag) {
+			return;
+		}
 		// try {
 		// Files.createDirectories(Paths.get(ConstantsAndMethods.winTempDir));
 		// } catch (IOException e) {
@@ -141,7 +143,9 @@ public class WinScraper {
 	}
 
 	private void downloadTextFileForEachFriend(int x, int y) throws AWTException {
-
+		if (ConstantsAndMethods.flag) {
+			return;
+		}
 		ConstantsAndMethods.click(x, y);
 		ConstantsAndMethods.delaySec(2);
 		Target targetAm = new ImageTarget(ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.winImagesDir

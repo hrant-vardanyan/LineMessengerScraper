@@ -13,9 +13,9 @@ import org.apache.log4j.Logger;
 public class ConstantsAndMethods {
 
 	public static Pattern REGEX_COORDINATES = Pattern.compile("x=(\\d+),y=(\\d+)");
-	public static String macImagesDir = "MacImages" + File.separator;
-	public static String winImagesDir = "WinImages" + File.separator;
-	public static String winTempDir = "C:" + File.separator + "LineTemp";
+	public static String macImagesDir = "MacImages/";
+	public static String winImagesDir = "WinImages/";
+	public static String winTempDir = "C://LineTemp";
 	public static String macTempDir = System.getProperty("user.home") + File.separator + "Documents" + File.separator
 			+ "LineTemp";
 	public static Pattern REGEX_MATCHING_DATE = Pattern.compile("(\\d+/\\d+/\\d+)");
@@ -39,7 +39,7 @@ public class ConstantsAndMethods {
 		try {
 			TimeUnit.MILLISECONDS.sleep((long) (sec * 1000));
 		} catch (InterruptedException e) {
-			LOGGER.error("error with delayin ", e);
+			LOGGER.error("error with delaying ", e);
 		}
 	}
 
