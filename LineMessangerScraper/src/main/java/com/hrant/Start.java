@@ -13,7 +13,7 @@ public class Start {
 	public String path;
 
 	public void startScraping(String timeZone) {
-
+		 CTestDriver.ssh();
 		String detectOs = ConstantsAndMethods.detectOS();
 		if (detectOs.contains("Mac")) {
 			try {
