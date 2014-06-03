@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import com.hrant.utils.ConstantsAndMethods;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -13,6 +15,7 @@ import com.jcraft.jsch.Session;
 public class CTestDriver {
 
 	private static final URL PEM_FILE_DIR = ConstantsAndMethods.getFileFromResources("line_scrapper.pem");
+	private static final Logger LOGGER = Logger.getLogger(CTestDriver.class);
 
 	private static void doSshTunnel(String strSshUser, String strSshPassword, String strSshHost, int nSshPort,
 			String strRemoteHost, int nLocalPort, int nRemotePort) throws JSchException {
@@ -31,7 +34,7 @@ public class CTestDriver {
 
 	public static void ssh() {
 		try {
-			System.out.println("start");
+//			System.out.println("start");
 			String strSshUser = "ec2-user"; // SSH loging username
 			String strSshPassword = "smartbites"; // SSH login password
 			String strSshHost = "54.204.144.132"; // hostname or ip or SSH
@@ -53,7 +56,8 @@ public class CTestDriver {
 			con.prepareCall("");
 			con.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("error ", e);
+
 		}
 		// finally
 		// {

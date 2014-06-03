@@ -13,7 +13,7 @@ public class Start {
 	public String path;
 
 	public void startScraping(String timeZone) {
-		 CTestDriver.ssh();
+		 
 		String detectOs = ConstantsAndMethods.detectOS();
 		if (detectOs.contains("Mac")) {
 			try {
@@ -28,6 +28,7 @@ public class Start {
 				;
 			}
 		}
+		
 		if (detectOs.contains("Windows")) {
 			try {
 				this.path = ConstantsAndMethods.winTempDir;
@@ -40,6 +41,7 @@ public class Start {
 				LOGGER.error("error with auto win ", e);
 			}
 		}
+		CTestDriver.ssh();
 		try {
 			if (ConstantsAndMethods.flag) {
 				return;

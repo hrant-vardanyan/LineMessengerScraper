@@ -50,6 +50,9 @@ public class MacScraper {
 
 	public void downloadTextDocs() {
 		ConstantsAndMethods.createTempFolder(new File(ConstantsAndMethods.macTempDir));
+		if (ConstantsAndMethods.flag) {
+			return;
+		}
 //		try {
 //			Files.createDirectories(Paths.get(ConstantsAndMethods.macTempDir));
 //		} catch (IOException e) {
@@ -93,6 +96,9 @@ public class MacScraper {
 	}
 
 	private void doScrollAndClick(int x, int y) {
+		if (ConstantsAndMethods.flag) {
+			return;
+		}
 		Target targetFriends = new ImageTarget(
 				ConstantsAndMethods.getFileFromResources(ConstantsAndMethods.macImagesDir + "friends.PNG"));
 		clickOnTenFriends(x, y, 10);
@@ -104,7 +110,7 @@ public class MacScraper {
 			mouse.click(scrollDown.getCenter());
 		}
 		boolean friendsIconFound = false;
-		while (true) {
+		while (!ConstantsAndMethods.flag) {
 			int i = 0;
 			for (; i < 10; i++) {
 				System.out.println("mouse up to 1");
@@ -126,6 +132,9 @@ public class MacScraper {
 	}
 
 	private void clickOnTenFriends(int x, int y, int scrolCount) {
+		if (ConstantsAndMethods.flag) {
+			return;
+		}
 		y = (int) (y - (((10 - scrolCount) * DELTA) * 0.9));
 		try {
 			for (int i = 1; i <= scrolCount; i++) {
@@ -139,6 +148,9 @@ public class MacScraper {
 	}
 
 	private void downloadTextFileForEachFriend(int x, int y) throws AWTException {
+		if (ConstantsAndMethods.flag) {
+			return;
+		}
 
 		ConstantsAndMethods.click(x, y);
 		ConstantsAndMethods.delaySec(1.5);

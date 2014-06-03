@@ -104,10 +104,10 @@ public class WinScraper {
 			mouse.click(scrollDown.getUpperLeftCorner());
 		}
 		boolean friendsIconFound = false;
-		while (true) {
+		while (!ConstantsAndMethods.flag) {
 			int i = 0;
 			for (; i < 11; i++) {
-				// System.out.println("mouse up to 1");
+				 System.out.println("mouse up to 1");
 				mouse.wheel(-1, 1);
 				if (desktop.find(targetFriends) != null) {
 					friendsIconFound = true;
@@ -115,7 +115,7 @@ public class WinScraper {
 				}
 			}
 			ConstantsAndMethods.delaySec(sec);
-			System.out.println(i);
+//			System.out.println(i);
 			clickOnTenFriends(i + 1);
 
 			if (friendsIconFound) {
@@ -126,7 +126,10 @@ public class WinScraper {
 	}
 
 	private void clickOnTenFriends(int scrolCount) {
-		int y = (int) (683 - (((11 - scrolCount) * DELTA) * 0.8));
+		if (ConstantsAndMethods.flag) {
+			return;
+		}
+		int y = (int) (683 - (((11 - scrolCount) * DELTA) * 0.7));
 		try {
 			if (ConstantsAndMethods.flag) {
 				return;

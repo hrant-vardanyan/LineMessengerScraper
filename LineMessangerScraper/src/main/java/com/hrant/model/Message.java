@@ -17,23 +17,17 @@ import javax.persistence.TemporalType;
 public class Message {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private int chatid;
+	private int id;
 	
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Calendar date;
 	private String speaker;
 	@Column(length=10_000)
 	private String citem;
+	private int chatid;
+
+
 	
-
-
-	public int getChatid() {
-		return chatid;
-	}
-
-	public void setChatid(int chatid) {
-		this.chatid = chatid;
-	}
 
 	public String getSpeaker() {
 		return speaker;
@@ -59,6 +53,22 @@ public class Message {
 
 	public void setCitem(String citem) {
 		this.citem = citem;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getChatid() {
+		return chatid;
+	}
+
+	public void setChatid(int chatid) {
+		this.chatid = chatid;
 	}
 
 	@Override

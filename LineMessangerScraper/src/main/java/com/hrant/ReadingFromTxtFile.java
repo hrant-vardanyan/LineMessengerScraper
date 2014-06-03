@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.hrant.dao.MessangerDAO;
 import com.hrant.model.Message;
@@ -28,6 +29,8 @@ public class ReadingFromTxtFile {
 	private List<String> allPathsInTempFolder;
 	private List<String> allNames;
 	private TimeZone timeZone;
+	private static final Logger LOGGER = Logger.getLogger(ReadingFromTxtFile.class);
+	private int chatid = 3;
 
 	public ReadingFromTxtFile(File pathToDirectory, String timeZoneStr) {
 		this.timeZone = TimeZone.getTimeZone(timeZoneStr);
@@ -40,9 +43,16 @@ public class ReadingFromTxtFile {
 		for (String path : this.allPathsInTempFolder) {
 			// writeDataForOneFile("C:\\LineTemp\\[LINE]OKpanda カスタマーサポート.txt");
 			try {
-				writeDataForOneFile(path);
+				String skippingFiles = StringUtils.substringAfterLast(path, "[LINE]");
+				if(skippingFiles.startsWith("IA") || skippingFiles.startsWith("NR")){
+					LOGGER.info("skip writting into DB cause people name starts with NR or IA");
+				}else{
+					writeDataForOneFile(path);
+					this.chatid++;
+				}
+				
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.error("error with writing ", e);
 			}
 		}
 	}
@@ -57,7 +67,7 @@ public class ReadingFromTxtFile {
 		}
 		MessangerDAO dao = new MessangerDAO();
 		for (Message message : allMessagesFromOneFile) {
-			System.out.println(message);
+//			System.out.println(message);
 			dao.addMessage(message);
 		}
 	}
@@ -103,6 +113,8 @@ public class ReadingFromTxtFile {
 				String fullName = getNameByFirstPart(nameFirstPart);
 				message.setSpeaker(fullName);
 				message.setCitem(StringUtils.substringAfter(timePattern.group().trim(), fullName));
+				message.setChatid(this.chatid);
+				
 			}
 			messageList.add(message);
 		}
@@ -115,7 +127,7 @@ public class ReadingFromTxtFile {
 		try {
 			dateObj = simpleDateFormat.parse(dateStr);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			LOGGER.error("error with parsing date ",e );
 		}
 		return DateToCalendar(dateObj);
 

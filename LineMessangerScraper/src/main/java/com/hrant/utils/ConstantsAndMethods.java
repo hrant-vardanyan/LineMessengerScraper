@@ -44,12 +44,12 @@ public class ConstantsAndMethods {
 	}
 
 	public static URL getFileFromResources(String filePath) {
-		LOGGER.info(filePath);
+//		LOGGER.info(filePath);
 		URL resourceUrl = null;
 		try {
 			
 			resourceUrl = Thread.currentThread().getContextClassLoader().getResource(filePath);
-			LOGGER.error("hbghn" + resourceUrl);
+//			LOGGER.error("hbghn" + resourceUrl);
 
 		} catch (Exception e) {
 			LOGGER.error("error with reading path ", e);
