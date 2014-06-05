@@ -12,7 +12,7 @@ public class Start {
 	private static final Logger LOGGER = Logger.getLogger(Start.class);
 	public String path;
 
-	public void startScraping(String timeZone) {
+	public void startScraping(String timeZone, String pemPath) {
 		 
 		String detectOs = ConstantsAndMethods.detectOS();
 		if (detectOs.contains("Mac")) {
@@ -41,11 +41,9 @@ public class Start {
 				LOGGER.error("error with auto win ", e);
 			}
 		}
-		CTestDriver.ssh();
+		ConnectToDB.ssh(pemPath);
 		try {
-			if (ConstantsAndMethods.flag) {
-				return;
-			}
+		
 			ReadingFromTxtFile file = new ReadingFromTxtFile(new File(path), timeZone);
 			file.writeForAllFiles();
 		} catch (Exception e) {

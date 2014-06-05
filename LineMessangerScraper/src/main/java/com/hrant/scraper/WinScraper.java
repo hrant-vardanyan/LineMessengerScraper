@@ -129,7 +129,7 @@ public class WinScraper {
 		if (ConstantsAndMethods.flag) {
 			return;
 		}
-		int y = (int) (683 - (((11 - scrolCount) * DELTA) * 0.7));
+		int y = (int) (683 - (((11 - scrolCount) * DELTA) * 0.9));
 		try {
 			if (ConstantsAndMethods.flag) {
 				return;
