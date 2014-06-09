@@ -30,7 +30,6 @@ public class ReadingFromTxtFile {
 	private List<String> allNames;
 	private TimeZone timeZone;
 	private static final Logger LOGGER = Logger.getLogger(ReadingFromTxtFile.class);
-	private int chatid = 3;
 
 	public ReadingFromTxtFile(File pathToDirectory, String timeZoneStr) {
 		this.timeZone = TimeZone.getTimeZone(timeZoneStr);
@@ -44,13 +43,13 @@ public class ReadingFromTxtFile {
 			// writeDataForOneFile("C:\\LineTemp\\[LINE]OKpanda カスタマーサポート.txt");
 			try {
 				String skippingFiles = StringUtils.substringAfterLast(path, "[LINE]");
-				if(skippingFiles.startsWith("IA") || skippingFiles.startsWith("NR")){
+				if (skippingFiles.startsWith("IA") || skippingFiles.startsWith("NR")) {
 					LOGGER.info("skip writting into DB cause people name starts with NR or IA");
-				}else{
+				} else {
 					writeDataForOneFile(path);
-					this.chatid++;
+
 				}
-				
+
 			} catch (IOException e) {
 				LOGGER.error("error with writing ", e);
 			}
@@ -63,13 +62,36 @@ public class ReadingFromTxtFile {
 		List<List<String>> listOfList = getSubLists(allLines);
 		List<Message> allMessagesFromOneFile = new ArrayList<>();
 		for (List<String> list : listOfList) {
-			allMessagesFromOneFile.addAll(getMessageList(list));
+			List<Message> messageList = getMessageList(list);
+
+			setAllRecivers(messageList);
+			allMessagesFromOneFile.addAll(messageList);
+
 		}
 		MessangerDAO dao = new MessangerDAO();
 		for (Message message : allMessagesFromOneFile) {
-//			System.out.println(message);
-			dao.addMessage(message);
+			// System.out.println(message);
+			if (!dao.isExsit(message)) {
+				dao.addMessage(message);
+			}
 		}
+	}
+
+	public void setAllRecivers(List<Message> messagesList) {
+		for (Message message : messagesList) {
+			String receiver = getReciver(message.getSpeaker(), messagesList);
+			message.setReceiver(receiver);
+		}
+
+	}
+
+	public String getReciver(String speaker, List<Message> messagesList) {
+		for (Message message : messagesList) {
+			if (!message.getSpeaker().equals(speaker)) {
+				return message.getSpeaker();
+			}
+		}
+		return "unreplicable";
 	}
 
 	private List<List<String>> getSubLists(List<String> allLines) {
@@ -113,8 +135,7 @@ public class ReadingFromTxtFile {
 				String fullName = getNameByFirstPart(nameFirstPart);
 				message.setSpeaker(fullName);
 				message.setCitem(StringUtils.substringAfter(timePattern.group().trim(), fullName));
-				message.setChatid(this.chatid);
-				
+
 			}
 			messageList.add(message);
 		}
@@ -127,7 +148,7 @@ public class ReadingFromTxtFile {
 		try {
 			dateObj = simpleDateFormat.parse(dateStr);
 		} catch (ParseException e) {
-			LOGGER.error("error with parsing date ",e );
+			LOGGER.error("error with parsing date ", e);
 		}
 		return DateToCalendar(dateObj);
 

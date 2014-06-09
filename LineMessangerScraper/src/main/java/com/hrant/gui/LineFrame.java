@@ -65,7 +65,7 @@ public class LineFrame extends JFrame implements ActionListener {
 			}
 		});
 		btnStart.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnStart.setBounds(23, 126, 89, 23);
+		btnStart.setBounds(23, 112, 89, 23);
 		contentPane.add(btnStart);
 
 		JButton btnStop = new JButton("Stop");
@@ -76,7 +76,7 @@ public class LineFrame extends JFrame implements ActionListener {
 			}
 		});
 		btnStop.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnStop.setBounds(136, 126, 81, 23);
+		btnStop.setBounds(136, 112, 81, 23);
 		contentPane.add(btnStop);
 
 		totCount = new JLabel("");
@@ -98,12 +98,20 @@ public class LineFrame extends JFrame implements ActionListener {
 		contentPane.add(timeZone);
 		timeZone.setColumns(10);
 		timeZone.setText("GMT-8:00");
+		
+		lblFinished = new JLabel("Finished ! ! !");
+		lblFinished.setFont(new Font("Tahoma", Font.ITALIC, 11));
+		lblFinished.setBounds(33, 146, 114, 14);
+		contentPane.add(lblFinished);
+		lblFinished.setVisible(false);
 
 		fileChooser = new JFileChooser();
 		fileChooser.setBounds(220, 178, 392, 175);
 	}
 
 	private Start start;
+
+	private JLabel lblFinished;
 
 	public void startDownloading() {
 		singleThreadExecutor = Executors.newSingleThreadExecutor();
@@ -117,11 +125,14 @@ public class LineFrame extends JFrame implements ActionListener {
 				try {
 					start = new Start();
 					start.startScraping(timeZone.getText(), pemPath.toString());
-
+//					VaheTets.test(pemPath.toString());
+					
+					lblFinished.setVisible(true);
 				} catch (Exception e) {
 					LOGGER.error("error", e);
 				}
 			}
+			
 
 		});
 

@@ -24,6 +24,7 @@ public class Message {
 	private String speaker;
 	@Column(length=10_000)
 	private String citem;
+	private String receiver;
 	private int chatid;
 
 
@@ -67,14 +68,25 @@ public class Message {
 		return chatid;
 	}
 
+	public String getReceiver() {
+		return receiver;
+	}
+
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
+	}
+
 	public void setChatid(int chatid) {
 		this.chatid = chatid;
 	}
 
 	@Override
 	public String toString() {
-		return "Message [speaker=" + speaker + ", citem=" + citem + ", date=" + date + "]";
+		return "Message [id=" + id + ", date=" + date + ", speaker=" + speaker + ", citem=" + citem + ", reciver="
+				+ receiver + ", chatid=" + chatid + "]";
 	}
+
+	
 	
 	
 	
