@@ -2,30 +2,41 @@ package com.hrant;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.vahe.TranscriptsEntity;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.hrant.dao.MessangerDAO;
 import com.hrant.model.Message;
+import com.hrant.utils.ConstantsAndMethods;
 
 public class ReadingFromTxtFile {
 
 	private static final Pattern DATE_PATTERN = Pattern.compile("(.+)\\(");
 	private static final Pattern MESSAGE_PATTERN = Pattern.compile("(\\d+:\\d+)\\s([^\\s]+)\\s(.+)", Pattern.DOTALL);
 	private static final Pattern NAME_PATTERN = Pattern.compile("\\[LINE\\](.+).txt");
+	private static final Pattern Date_PATTERN = Pattern.compile("(\\d+/\\d+/\\d+)");
 	private List<String> allPathsInTempFolder;
 	private List<String> allNames;
 	private TimeZone timeZone;
@@ -40,9 +51,11 @@ public class ReadingFromTxtFile {
 
 	public void writeForAllFiles() {
 		for (String path : this.allPathsInTempFolder) {
-			// writeDataForOneFile("C:\\LineTemp\\[LINE]OKpanda カスタマーサポート.txt");
 			try {
 				String skippingFiles = StringUtils.substringAfterLast(path, "[LINE]");
+				if (ConstantsAndMethods.flag) {
+					break;
+				}
 				if (skippingFiles.startsWith("IA") || skippingFiles.startsWith("NR")) {
 					LOGGER.info("skip writting into DB cause people name starts with NR or IA");
 				} else {
@@ -50,7 +63,7 @@ public class ReadingFromTxtFile {
 
 				}
 
-			} catch (IOException e) {
+			} catch (Exception e) {
 				LOGGER.error("error with writing ", e);
 			}
 		}
@@ -62,6 +75,9 @@ public class ReadingFromTxtFile {
 		List<List<String>> listOfList = getSubLists(allLines);
 		List<Message> allMessagesFromOneFile = new ArrayList<>();
 		for (List<String> list : listOfList) {
+			if (ConstantsAndMethods.flag) {
+				break;
+			}
 			List<Message> messageList = getMessageList(list);
 
 			setAllRecivers(messageList);
@@ -69,10 +85,45 @@ public class ReadingFromTxtFile {
 
 		}
 		MessangerDAO dao = new MessangerDAO();
+		int count = 0;
 		for (Message message : allMessagesFromOneFile) {
+			LOGGER.info("Count = " + ++count + "   " + message.getCitem());
+			if (count == 7) {
+				LOGGER.info("Test");
+			}
 			// System.out.println(message);
-			if (!dao.isExsit(message)) {
+			if (ConstantsAndMethods.flag) {
+				break;
+			}
+			if (!dao.isExsit(message) && !ConstantsAndMethods.RECEIVER.equals(message.getReceiver())
+					&& StringUtils.isNotEmpty(message.getCitem()) && StringUtils.isNotEmpty(message.getReceiver())) {
 				dao.addMessage(message);
+				TranscriptsEntity te = new TranscriptsEntity();
+				te.setChatid(message.getChatid());
+				te.setCorrections(0);
+				te.setDelaycount(0);
+				Timestamp timestamp = new Timestamp(0);
+				te.setFchatdate(timestamp);
+				te.setLchatdate(timestamp);
+				te.setLinescount(0);
+				te.setLongdelaycount(0);
+				te.setMediumdelaycount(0);
+				te.setQueryrun("0");
+				te.setSessiondays(0);
+				te.setSessionscount(0);
+				te.setSlines(0);
+				te.setStudent("0");
+				te.setTlines(0);
+				te.setTotaldelay(0);
+				te.setTransactionprocessingdate(timestamp);
+				te.setTresponsetime(0);
+				te.setTresponses(0);
+				te.setTeacher("0");
+				try {
+					dao.addIfNotExsistTranscriptsEntity(te);
+				} catch (Exception e) {
+					LOGGER.error("error with tr ", e);
+				}
 			}
 		}
 	}
@@ -91,7 +142,7 @@ public class ReadingFromTxtFile {
 				return message.getSpeaker();
 			}
 		}
-		return "unreplicable";
+		return ConstantsAndMethods.RECEIVER;
 	}
 
 	private List<List<String>> getSubLists(List<String> allLines) {
@@ -116,15 +167,22 @@ public class ReadingFromTxtFile {
 	}
 
 	private List<Message> getMessageList(List<String> list) {
-		String date = list.get(0);
-		Matcher matcher = DATE_PATTERN.matcher(date);
-		String dateStr = "";
-		if (matcher.find()) {
-			dateStr = matcher.group(1);
-		}
+
 		List<Message> messageList = new ArrayList<>();
+		String dateStr = "";
 		for (int i = 1; i < list.size(); i++) {
 			Message message = new Message();
+			String date = list.get(i - 1);
+			Matcher matcher = DATE_PATTERN.matcher(date);
+			if (matcher.find()) {
+				String dateStrEnc = matcher.group(1);
+				Matcher matcherDatePa = Date_PATTERN.matcher(dateStrEnc);
+				if (matcherDatePa.find()) {
+
+					dateStr = matcherDatePa.group(1).trim();
+				}
+			}
+
 			Matcher timePattern = MESSAGE_PATTERN.matcher(list.get(i));
 			if (timePattern.find()) {
 				String time = timePattern.group(1);
@@ -134,7 +192,14 @@ public class ReadingFromTxtFile {
 				String nameFirstPart = timePattern.group(2);
 				String fullName = getNameByFirstPart(nameFirstPart);
 				message.setSpeaker(fullName);
-				message.setCitem(StringUtils.substringAfter(timePattern.group().trim(), fullName));
+				String substringAfterCitem = StringUtils.substringAfter(timePattern.group().trim(), fullName);
+				Matcher matcherDateCitem = Date_PATTERN.matcher(substringAfterCitem);
+				if(matcherDateCitem.find()){
+					String dt = matcherDateCitem.group(1);
+					substringAfterCitem = StringUtils.substringBefore(substringAfterCitem, dt);
+				}
+			
+				message.setCitem(substringAfterCitem);
 
 			}
 			messageList.add(message);
@@ -143,27 +208,44 @@ public class ReadingFromTxtFile {
 	}
 
 	private Calendar strToCalendar(String dateStr) {
+
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 		Date dateObj = null;
 		try {
 			dateObj = simpleDateFormat.parse(dateStr);
 		} catch (ParseException e) {
-			LOGGER.error("error with parsing date ", e);
+			LOGGER.error("error with parsing date " + dateStr, e);
 		}
+		// GregorianCalendar gregorianCalendar = dt.toGregorianCalendar();
+		// return gregorianCalendar;
 		return DateToCalendar(dateObj);
 
 	}
 
 	private static Calendar DateToCalendar(Date date) {
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
+		try {
+			if (date != null) {
+
+				cal.setTime(date);
+			}
+		} catch (Exception e) {
+			LOGGER.error("error with date ", e);
+		}
 		return cal;
 	}
 
 	private List<String> getDataFromTxtFile(String path) throws IOException {
 
 		byte[] readAllBytes = Files.readAllBytes(Paths.get(path));
-		String allContent = new String(readAllBytes);
+		String allContent = new String(readAllBytes, StandardCharsets.UTF_8.toString());
+
+		try {
+			allContent = allContent.replaceAll("[LINE].+", "").replaceAll("(Saved time.+)", "");
+		} catch (Exception e) {
+			LOGGER.error("error with re ", e);
+		}
+
 		String[] split = allContent.split("(?=\\d{2}:\\d{2})");
 		List<String> allLines = Arrays.asList(split);
 		// List<String> allLines = Files.readAllLines(Paths.get(path),

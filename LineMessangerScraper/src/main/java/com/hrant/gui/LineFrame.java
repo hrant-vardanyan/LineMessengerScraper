@@ -3,8 +3,8 @@ package com.hrant.gui;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,12 +46,13 @@ public class LineFrame extends JFrame implements ActionListener {
 	/**
 	 * Create the frame.
 	 */
+
 	public LineFrame() {
 
 		setTitle("LINE Scraper ");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 240, 194);
+		setBounds(100, 100, 301, 211);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -65,7 +66,7 @@ public class LineFrame extends JFrame implements ActionListener {
 			}
 		});
 		btnStart.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnStart.setBounds(23, 112, 89, 23);
+		btnStart.setBounds(23, 123, 89, 23);
 		contentPane.add(btnStart);
 
 		JButton btnStop = new JButton("Stop");
@@ -76,7 +77,7 @@ public class LineFrame extends JFrame implements ActionListener {
 			}
 		});
 		btnStop.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnStop.setBounds(136, 112, 81, 23);
+		btnStop.setBounds(162, 123, 81, 23);
 		contentPane.add(btnStop);
 
 		totCount = new JLabel("");
@@ -88,22 +89,26 @@ public class LineFrame extends JFrame implements ActionListener {
 		btnSelectInputFile.setBounds(23, 29, 155, 23);
 		contentPane.add(btnSelectInputFile);
 
-		JLabel lblTimezoneeG = new JLabel("TimeZone(e. g. GMT-8:00)");
+		JLabel lblTimezoneeG = new JLabel("TimeZone  (e. g. GMT-8:00)");
 		lblTimezoneeG.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblTimezoneeG.setBounds(23, 78, 144, 14);
+		lblTimezoneeG.setBounds(23, 86, 144, 14);
 		contentPane.add(lblTimezoneeG);
 
 		timeZone = new JTextField();
-		timeZone.setBounds(151, 70, 66, 30);
+		timeZone.setBounds(177, 78, 89, 30);
 		contentPane.add(timeZone);
 		timeZone.setColumns(10);
-		timeZone.setText("GMT-8:00");
+		timeZone.setText("UTC-08:00");
+
+		lblInfo = new JLabel("");
+		lblInfo.setFont(new Font("Tahoma", Font.ITALIC, 11));
+		lblInfo.setBounds(10, 157, 274, 14);
+		contentPane.add(lblInfo);
 		
-		lblFinished = new JLabel("Finished ! ! !");
-		lblFinished.setFont(new Font("Tahoma", Font.ITALIC, 11));
-		lblFinished.setBounds(33, 146, 114, 14);
-		contentPane.add(lblFinished);
-		lblFinished.setVisible(false);
+		inputPath = new JLabel("");
+		inputPath.setBounds(23, 63, 261, 14);
+		contentPane.add(inputPath);
+		lblInfo.setVisible(false);
 
 		fileChooser = new JFileChooser();
 		fileChooser.setBounds(220, 178, 392, 175);
@@ -111,28 +116,36 @@ public class LineFrame extends JFrame implements ActionListener {
 
 	private Start start;
 
-	private JLabel lblFinished;
+	private JLabel lblInfo;
+
+	private JLabel inputPath;
 
 	public void startDownloading() {
 		singleThreadExecutor = Executors.newSingleThreadExecutor();
+		
 		singleThreadExecutor.submit(new Runnable() {
 
 			@Override
 			public void run() {
+				if(pemPath == null){
+					lblInfo.setText("please input .pem file !");
+					lblInfo.setVisible(true);
+					return;
+				}
 
 				btnStart.setEnabled(false);
 
 				try {
 					start = new Start();
+					lblInfo.setText(" Start writing into DB " + new Date());
+					lblInfo.setVisible(true);
 					start.startScraping(timeZone.getText(), pemPath.toString());
-//					VaheTets.test(pemPath.toString());
-					
-					lblFinished.setVisible(true);
+
+					lblInfo.setText("Finished ! ! ! " + new Date());
 				} catch (Exception e) {
 					LOGGER.error("error", e);
 				}
 			}
-			
 
 		});
 
@@ -140,7 +153,6 @@ public class LineFrame extends JFrame implements ActionListener {
 
 	public void stopDownloading() {
 
-		ConstantsAndMethods.deleteTempFolder(new File(start.path));
 		ConstantsAndMethods.flag = true;
 
 	}
@@ -150,9 +162,10 @@ public class LineFrame extends JFrame implements ActionListener {
 		int returnVal = fileChooser.showOpenDialog(LineFrame.this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			this.pemPath = fileChooser.getSelectedFile().toPath();
-			// String message = "Selected path is " + path;
-			// pathToFile.setText(path.toString());
-			// writeToTextArea(message);
+			 String message = "Selected path is " + pemPath;
+			 inputPath.setText(message);
+			 
+			
 		}
 
 	}
